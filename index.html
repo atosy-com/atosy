@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes">
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent">
+
+  <meta
+    name="theme-color"
+    content="#0B3D91">
+
+  <title>Atosy Learning</title>
+
+  <link
+    rel="apple-touch-icon"
+    href="icon-250.png">
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="icon-500.png">
+
+  <link
+    rel="manifest"
+    href="manifest.json">
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #041B33;
+    }
+
+    #atosy-app {
+      position: fixed;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      border: 0;
+      margin: 0;
+      padding: 0;
+
+      background: #041B33;
+    }
+
+    .loading {
+      position: fixed;
+      inset: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          135deg,
+          #041B33 0%,
+          #0B3D91 50%,
+          #1E6FD9 100%
+        );
+
+      color: white;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      font-size: 20px;
+      font-weight: 800;
+
+      z-index: 10;
+    }
+
+    .loading.hidden {
+      display: none;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div
+    class="loading"
+    id="loading">
+
+    Atosy Learning
+
+  </div>
+
+  <iframe
+    id="atosy-app"
+    src="DAN_URL_APPS_SCRIPT_VAO_DAY">
+
+  </iframe>
+
+  <script>
+
+    const iframe =
+      document.getElementById(
+        "atosy-app"
+      );
+
+    const loading =
+      document.getElementById(
+        "loading"
+      );
+
+    iframe.addEventListener(
+      "load",
+      function() {
+
+        loading.classList.add(
+          "hidden"
+        );
+
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>
