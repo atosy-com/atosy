@@ -7,10 +7,6 @@
     name="viewport"
     content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-  <meta
-    name="theme-color"
-    content="#174a82">
-
   <title>Tài liệu tham khảo</title>
 
   <style>
@@ -24,7 +20,7 @@
       width: 100%;
       min-height: 100%;
 
-      background: #202124;
+      background: #EEF3F8;
 
       font-family:
         -apple-system,
@@ -37,195 +33,59 @@
     }
 
     body {
-      padding-top: env(safe-area-inset-top);
-      overflow-x: hidden;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
-    .viewer-header {
-      position: fixed;
-
-      top: env(safe-area-inset-top);
-      left: 0;
-      right: 0;
-
-      height: 58px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 14px;
-
-      background: #174a82;
-      color: white;
-
-      z-index: 20;
-    }
-
-    .viewer-title {
-      min-width: 0;
-
-      font-size: 18px;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.2px;
-
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .btn-close {
-      flex-shrink: 0;
-
-      width: 44px;
-      height: 44px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border: 0;
-      border-radius: 12px;
-
-      background: rgba(255,255,255,0.16);
-      color: white;
-
-      font-family: inherit;
-      font-size: 30px;
-      font-weight: 500;
-      line-height: 1;
-
-      cursor: pointer;
-    }
-
-    .toolbar {
-      position: fixed;
-
-      top: calc(58px + env(safe-area-inset-top));
-      left: 0;
-      right: 0;
-
-      min-height: 52px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 10px;
-
-      padding: 7px 10px;
-
-      background: #303134;
-
-      z-index: 19;
-
-      border-bottom:
-        1px solid rgba(255,255,255,0.06);
-    }
-
-    .toolbar button,
-    .toolbar input,
-    #page-total {
-      font-family: inherit;
-    }
-
-    .toolbar button,
-    .toolbar input {
-      height: 36px;
-
-      border-radius: 8px;
-      border: 1px solid #666;
-
-      background: #3c4043;
-      color: white;
-
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .toolbar button {
-      min-width: 50px;
-
-      padding: 0 12px;
-
-      cursor: pointer;
-    }
-
-    .toolbar button:disabled,
-    .toolbar input:disabled {
-      opacity: 0.42;
-      cursor: default;
-    }
-
-    .toolbar input {
-      width: 72px;
-
-      padding: 0 8px;
-
-      text-align: center;
-
-      outline: none;
-    }
-
-    #page-total {
-      color: white;
-
-      font-size: 13px;
-      font-weight: 700;
-
-      white-space: nowrap;
-    }
-
-    .pdf-wrap {
+    .viewer {
       min-height: 100vh;
 
-      padding:
-        calc(122px + env(safe-area-inset-top))
-        10px
-        calc(30px + env(safe-area-inset-bottom));
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
 
-      text-align: center;
+      padding: 16px;
     }
 
-    .status-wrap {
+    .loading {
       width:
         min(
-          420px,
+          360px,
           calc(100vw - 40px)
         );
 
-      margin:
-        42px
-        auto
-        0;
+      margin-top: 42px;
 
-      color: white;
-    }
-
-    .status {
-      color: white;
+      color: #163F73;
 
       text-align: center;
+    }
 
-      font-size: 17px;
-      font-weight: 700;
-      line-height: 1.35;
-      letter-spacing: -0.1px;
+    .loading-title {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .loading-detail {
+      margin-top: 7px;
+
+      color: #67809A;
+
+      font-size: 12px;
+      font-weight: 600;
     }
 
     .progress-track {
       width: 100%;
-      height: 9px;
+      height: 8px;
 
-      margin-top: 16px;
+      margin-top: 14px;
 
       overflow: hidden;
 
       border-radius: 999px;
 
-      background:
-        rgba(255,255,255,0.14);
+      background: #D5E0EB;
     }
 
     .progress-bar {
@@ -234,148 +94,71 @@
 
       border-radius: inherit;
 
-      background: #4DA3FF;
+      background: #2D75C7;
 
-      transition:
-        width .15s ease;
+      transition: width .15s ease;
     }
 
-    .progress-text {
-      margin-top: 8px;
-
-      color:
-        rgba(255,255,255,0.76);
-
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .status-detail {
-      margin-top: 7px;
-
-      color:
-        rgba(255,255,255,0.60);
-
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .error-box {
+    .error {
       display: none;
 
       width:
         min(
-          520px,
-          calc(100vw - 34px)
+          440px,
+          calc(100vw - 40px)
         );
 
-      margin:
-        38px
-        auto
-        0;
+      margin-top: 42px;
 
-      padding: 18px;
+      padding: 16px;
 
-      border:
-        1px solid rgba(255,255,255,0.16);
+      border-radius: 16px;
 
-      border-radius: 14px;
+      background: #FFFFFF;
 
-      background:
-        rgba(255,255,255,0.06);
+      color: #8B1E1E;
 
-      color: white;
+      box-shadow:
+        0 8px 26px rgba(16,55,92,0.10);
 
       text-align: left;
-    }
 
-    .error-title {
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    .error-detail {
-      margin-top: 7px;
-
-      color:
-        rgba(255,255,255,0.72);
-
-      font-size: 12px;
+      font-size: 13px;
       line-height: 1.5;
-
-      word-break: break-word;
     }
 
-    .retry-btn {
-      margin-top: 14px;
-
-      min-height: 38px;
-
-      padding: 0 14px;
-
-      border: 0;
-      border-radius: 10px;
-
-      background: #174a82;
-      color: white;
-
-      font-family: inherit;
-      font-weight: 800;
-
-      cursor: pointer;
-    }
-
-    .canvas-shell {
+    .canvas-wrap {
       display: none;
 
       width: 100%;
 
-      margin:
-        0
-        auto;
+      text-align: center;
     }
 
     canvas {
       display: block;
 
-      margin: 0 auto;
-
       max-width: 100%;
       height: auto;
 
-      background: white;
+      margin: 0 auto;
+
+      background: #FFFFFF;
+
+      border-radius: 8px;
 
       box-shadow:
-        0 6px 22px rgba(0,0,0,0.30);
+        0 8px 26px rgba(16,55,92,0.16);
     }
 
     @media (max-width: 700px) {
 
-      .viewer-title {
-        font-size: 18px;
-      }
-
-      .toolbar {
-        gap: 8px;
-      }
-
-      .toolbar button {
-        min-width: 48px;
-
-        padding: 0 10px;
-      }
-
-      .toolbar input {
-        width: 68px;
-      }
-
-      .pdf-wrap {
-        padding-left: 0;
-        padding-right: 0;
+      .viewer {
+        padding: 10px;
       }
 
       canvas {
-        box-shadow: none;
+        border-radius: 6px;
       }
 
     }
@@ -384,100 +167,21 @@
 
 <body>
 
-  <div class="viewer-header">
+  <div class="viewer">
 
     <div
-      class="viewer-title"
-      id="viewer-title">
+      id="loading"
+      class="loading">
 
-      Tài liệu tham khảo
-
-    </div>
-
-    <button
-      class="btn-close"
-      type="button"
-      onclick="dongViewer()"
-      aria-label="Đóng">
-
-      ×
-
-    </button>
-
-  </div>
-
-
-  <div class="toolbar">
-
-    <button
-      id="btn-prev"
-      type="button"
-      onclick="trangTruoc()"
-      disabled>
-
-      ‹
-
-    </button>
-
-    <input
-      id="page-input"
-      type="number"
-      min="1"
-      inputmode="numeric"
-      disabled>
-
-    <span
-      id="page-total">
-
-      / —
-
-    </span>
-
-    <button
-      id="btn-next"
-      type="button"
-      onclick="trangSau()"
-      disabled>
-
-      ›
-
-    </button>
-
-    <button
-      id="btn-zoom-out"
-      type="button"
-      onclick="thuNho()"
-      disabled>
-
-      −
-
-    </button>
-
-    <button
-      id="btn-zoom-in"
-      type="button"
-      onclick="phongTo()"
-      disabled>
-
-      +
-
-    </button>
-
-  </div>
-
-
-  <div class="pdf-wrap">
-
-    <div
-      id="status-wrap"
-      class="status-wrap">
+      <div class="loading-title">
+        Đang mở trang tài liệu...
+      </div>
 
       <div
-        id="status"
-        class="status">
+        id="loading-detail"
+        class="loading-detail">
 
-        Đang tải tài liệu...
-
+        Đang đọc dữ liệu cần thiết.
       </div>
 
       <div class="progress-track">
@@ -489,55 +193,18 @@
 
       </div>
 
-      <div
-        id="progress-text"
-        class="progress-text">
-
-        0%
-
-      </div>
-
-      <div
-        id="status-detail"
-        class="status-detail">
-
-        Đang kết nối đến PDF...
-
-      </div>
-
     </div>
 
 
     <div
-      id="error-box"
-      class="error-box">
-
-      <div class="error-title">
-
-        Không thể tải PDF.
-
-      </div>
-
-      <div
-        id="error-detail"
-        class="error-detail">
-      </div>
-
-      <button
-        class="retry-btn"
-        type="button"
-        onclick="thuLai()">
-
-        Thử lại
-
-      </button>
-
+      id="error"
+      class="error">
     </div>
 
 
     <div
-      id="canvas-shell"
-      class="canvas-shell">
+      id="canvas-wrap"
+      class="canvas-wrap">
 
       <canvas id="pdf-canvas"></canvas>
 
@@ -575,30 +242,6 @@
       ) || 1;
 
 
-    let zoom =
-      1;
-
-
-    let pdfDoc =
-      null;
-
-
-    let loadingTask =
-      null;
-
-
-    let renderTask =
-      null;
-
-
-    let loadTimeout =
-      null;
-
-
-    let resizeTimer =
-      null;
-
-
     const canvas =
       document.getElementById(
         "pdf-canvas"
@@ -614,223 +257,44 @@
       );
 
 
-    function capNhatTrangThai(
-      noiDung,
-      chiTiet
-    ) {
-
-      document.getElementById(
-        "status"
-      ).innerText =
-        noiDung || "";
-
-
-      document.getElementById(
-        "status-detail"
-      ).innerText =
-        chiTiet || "";
-
-    }
-
-
-    function capNhatTienDo(
-      loaded,
-      total
-    ) {
-
-      let percent =
-        0;
-
-
-      if (
-        total &&
-        total > 0
-      ) {
-
-        percent =
-          Math.round(
-            loaded /
-            total *
-            100
-          );
-
-
-        percent =
-          Math.max(
-            0,
-            Math.min(
-              100,
-              percent
-            )
-          );
-
-      } else if (
-        loaded > 0
-      ) {
-
-        percent =
-          Math.min(
-            95,
-            Math.max(
-              5,
-              Math.round(
-                loaded /
-                (1024 * 1024)
-              ) *
-              3
-            )
-          );
-
-      }
-
-
-      document.getElementById(
-        "progress-bar"
-      ).style.width =
-        percent + "%";
-
-
-      document.getElementById(
-        "progress-text"
-      ).innerText =
-        total &&
-        total > 0
-
-          ? percent + "%"
-
-          : (
-              loaded > 0
-                ? "Đang tải..."
-                : "0%"
-            );
-
-    }
-
-
-    function batToolbar(
-      enabled
-    ) {
-
-      [
-        "btn-prev",
-        "btn-next",
-        "btn-zoom-out",
-        "btn-zoom-in",
-        "page-input"
-      ]
-      .forEach(
-        function(id) {
-
-          const el =
-            document.getElementById(
-              id
-            );
-
-
-          if (el) {
-
-            el.disabled =
-              !enabled;
-
-          }
-
-        }
-      );
-
-    }
-
-
     function hienLoi(
-      err
+      message
     ) {
 
-      clearTimeout(
-        loadTimeout
-      );
-
-
       document.getElementById(
-        "status-wrap"
+        "loading"
       ).style.display =
         "none";
 
 
       document.getElementById(
-        "canvas-shell"
+        "canvas-wrap"
       ).style.display =
         "none";
 
 
-      document.getElementById(
-        "error-box"
-      ).style.display =
+      const error =
+        document.getElementById(
+          "error"
+        );
+
+
+      error.style.display =
         "block";
 
 
-      document.getElementById(
-        "error-detail"
-      ).innerText =
-        err &&
-        err.message
-
-          ? err.message
-
-          : String(
-              err ||
-              "Không xác định được lỗi."
-            );
-
-
-      batToolbar(
-        false
-      );
+      error.innerText =
+        message;
 
     }
 
 
     async function khoiDong() {
 
-      document.getElementById(
-        "error-box"
-      ).style.display =
-        "none";
-
-
-      document.getElementById(
-        "canvas-shell"
-      ).style.display =
-        "none";
-
-
-      document.getElementById(
-        "status-wrap"
-      ).style.display =
-        "block";
-
-
-      capNhatTienDo(
-        0,
-        1
-      );
-
-
-      capNhatTrangThai(
-        "Đang tải tài liệu...",
-        "Đang kết nối đến PDF..."
-      );
-
-
-      batToolbar(
-        false
-      );
-
-
       if (!file) {
 
         hienLoi(
-          new Error(
-            "Không tìm thấy đường dẫn file PDF."
-          )
+          "Không tìm thấy đường dẫn PDF."
         );
 
         return;
@@ -838,24 +302,19 @@
       }
 
 
-      loadTimeout =
-        setTimeout(
-          function() {
-
-            hienLoi(
-              new Error(
-                "Tải PDF quá lâu. Hãy kiểm tra mạng và thử lại."
-              )
-            );
-
-          },
-          45000
-        );
-
-
       try {
 
-        loadingTask =
+        /*
+         * Mục tiêu:
+         * - chỉ render đúng 1 trang được yêu cầu;
+         * - ưu tiên HTTP Range Request;
+         * - tắt stream toàn file;
+         * - tắt tự tải các phần chưa cần.
+         *
+         * PDF.js vẫn có thể cần đọc thêm một số vùng của file
+         * (xref / object liên quan) tùy cấu trúc PDF.
+         */
+        const loadingTask =
           pdfjsLib.getDocument({
 
             url:
@@ -868,10 +327,10 @@
               false,
 
             disableStream:
-              false,
+              true,
 
             disableAutoFetch:
-              false
+              true
 
           });
 
@@ -893,64 +352,51 @@
               ) || 0;
 
 
-            capNhatTienDo(
-              loaded,
-              total
-            );
-
-
             if (
               total > 0
             ) {
 
-              const mbLoaded =
-                (
-                  loaded /
-                  1024 /
-                  1024
-                ).toFixed(1);
+              const percent =
+                Math.max(
+                  0,
+                  Math.min(
+                    100,
+                    Math.round(
+                      loaded /
+                      total *
+                      100
+                    )
+                  )
+                );
 
 
-              const mbTotal =
-                (
-                  total /
-                  1024 /
-                  1024
-                ).toFixed(1);
+              document.getElementById(
+                "progress-bar"
+              ).style.width =
+                percent + "%";
 
 
-              capNhatTrangThai(
-                "Đang tải tài liệu...",
-                mbLoaded +
-                " MB / " +
-                mbTotal +
-                " MB"
-              );
+              document.getElementById(
+                "loading-detail"
+              ).innerText =
+                "Đang đọc dữ liệu cần thiết • " +
+                percent +
+                "%";
 
             } else {
 
-              capNhatTrangThai(
-                "Đang tải tài liệu...",
-                (
-                  loaded /
-                  1024 /
-                  1024
-                ).toFixed(1) +
-                " MB đã nhận"
-              );
+              document.getElementById(
+                "loading-detail"
+              ).innerText =
+                "Đang đọc dữ liệu cần thiết...";
 
             }
 
           };
 
 
-        pdfDoc =
+        const pdfDoc =
           await loadingTask.promise;
-
-
-        clearTimeout(
-          loadTimeout
-        );
 
 
         pageNum =
@@ -963,171 +409,91 @@
           );
 
 
-        document.getElementById(
-          "page-total"
-        ).innerText =
-          "/ " +
-          pdfDoc.numPages;
+        const page =
+          await pdfDoc.getPage(
+            pageNum
+          );
 
 
-        document.getElementById(
-          "page-input"
-        ).max =
-          pdfDoc.numPages;
+        const baseViewport =
+          page.getViewport({
+            scale: 1
+          });
 
 
-        document.getElementById(
-          "page-input"
-        ).value =
-          pageNum;
+        const availableWidth =
+          Math.max(
+            260,
+            window.innerWidth -
+            (
+              window.innerWidth <= 700
+                ? 20
+                : 36
+            )
+          );
 
 
-        capNhatTrangThai(
-          "Đang mở trang " +
-          pageNum +
-          "...",
-          "Đã đọc cấu trúc tài liệu."
-        );
+        const fitScale =
+          availableWidth /
+          baseViewport.width;
 
 
-        await renderPage();
+        const viewport =
+          page.getViewport({
+            scale:
+              fitScale
+          });
 
 
-        capNhatTienDo(
-          1,
-          1
-        );
+        const outputScale =
+          Math.min(
+            window.devicePixelRatio || 1,
+            2
+          );
 
 
-        batToolbar(
-          true
-        );
+        canvas.width =
+          Math.floor(
+            viewport.width *
+            outputScale
+          );
 
 
-        capNhatNutTrang();
-
-      } catch (err) {
-
-        console.error(
-          "Lỗi tải PDF:",
-          err
-        );
+        canvas.height =
+          Math.floor(
+            viewport.height *
+            outputScale
+          );
 
 
-        hienLoi(
-          err
-        );
-
-      }
-
-    }
+        canvas.style.width =
+          Math.floor(
+            viewport.width
+          ) + "px";
 
 
-    async function renderPage() {
-
-      if (!pdfDoc) {
-        return;
-      }
-
-
-      if (renderTask) {
-
-        try {
-
-          renderTask.cancel();
-
-        } catch (_) {}
-
-      }
+        canvas.style.height =
+          Math.floor(
+            viewport.height
+          ) + "px";
 
 
-      const page =
-        await pdfDoc.getPage(
-          pageNum
-        );
+        const transform =
+          outputScale !== 1
+
+            ? [
+                outputScale,
+                0,
+                0,
+                outputScale,
+                0,
+                0
+              ]
+
+            : null;
 
 
-      const baseViewport =
-        page.getViewport({
-          scale: 1
-        });
-
-
-      const availableWidth =
-        Math.max(
-          280,
-          window.innerWidth -
-          (
-            window.innerWidth <= 700
-              ? 8
-              : 30
-          )
-        );
-
-
-      const fitScale =
-        availableWidth /
-        baseViewport.width;
-
-
-      const viewport =
-        page.getViewport({
-          scale:
-            fitScale *
-            zoom
-        });
-
-
-      const outputScale =
-        Math.min(
-          window.devicePixelRatio || 1,
-          2
-        );
-
-
-      canvas.width =
-        Math.floor(
-          viewport.width *
-          outputScale
-        );
-
-
-      canvas.height =
-        Math.floor(
-          viewport.height *
-          outputScale
-        );
-
-
-      canvas.style.width =
-        Math.floor(
-          viewport.width
-        ) + "px";
-
-
-      canvas.style.height =
-        Math.floor(
-          viewport.height
-        ) + "px";
-
-
-      const transform =
-        outputScale !== 1
-
-          ? [
-              outputScale,
-              0,
-              0,
-              outputScale,
-              0,
-              0
-            ]
-
-          : null;
-
-
-      renderTask =
-        page.render({
+        await page.render({
 
           canvasContext:
             ctx,
@@ -1141,290 +507,47 @@
           intent:
             "display"
 
-        });
+        }).promise;
 
 
-      await renderTask.promise;
+        document.getElementById(
+          "loading"
+        ).style.display =
+          "none";
 
 
-      document.getElementById(
-        "status-wrap"
-      ).style.display =
-        "none";
+        document.getElementById(
+          "error"
+        ).style.display =
+          "none";
 
 
-      document.getElementById(
-        "error-box"
-      ).style.display =
-        "none";
+        document.getElementById(
+          "canvas-wrap"
+        ).style.display =
+          "block";
 
 
-      document.getElementById(
-        "canvas-shell"
-      ).style.display =
-        "block";
+      } catch (err) {
 
-
-      document.getElementById(
-        "page-input"
-      ).value =
-        pageNum;
-
-
-      capNhatNutTrang();
-
-
-      const url =
-        new URL(
-          window.location.href
+        console.error(
+          err
         );
 
 
-      url.searchParams.set(
-        "page",
-        String(
-          pageNum
-        )
-      );
+        hienLoi(
+          err &&
+          err.message
 
+            ? "Không thể mở trang tài liệu: " +
+              err.message
 
-      history.replaceState(
-        null,
-        "",
-        url
-      );
-
-    }
-
-
-    function capNhatNutTrang() {
-
-      document.getElementById(
-        "btn-prev"
-      ).disabled =
-        !pdfDoc ||
-        pageNum <= 1;
-
-
-      document.getElementById(
-        "btn-next"
-      ).disabled =
-        !pdfDoc ||
-        pageNum >=
-        pdfDoc.numPages;
-
-    }
-
-
-    window.trangTruoc =
-      async function() {
-
-        if (
-          !pdfDoc ||
-          pageNum <= 1
-        ) {
-
-          return;
-
-        }
-
-
-        pageNum--;
-
-
-        window.scrollTo(
-          0,
-          0
+            : "Không thể mở trang tài liệu."
         );
-
-
-        await renderPage();
-
-      };
-
-
-    window.trangSau =
-      async function() {
-
-        if (
-          !pdfDoc ||
-          pageNum >=
-          pdfDoc.numPages
-        ) {
-
-          return;
-
-        }
-
-
-        pageNum++;
-
-
-        window.scrollTo(
-          0,
-          0
-        );
-
-
-        await renderPage();
-
-      };
-
-
-    window.phongTo =
-      async function() {
-
-        zoom =
-          Math.min(
-            2.6,
-            zoom + 0.15
-          );
-
-
-        await renderPage();
-
-      };
-
-
-    window.thuNho =
-      async function() {
-
-        zoom =
-          Math.max(
-            0.55,
-            zoom - 0.15
-          );
-
-
-        await renderPage();
-
-      };
-
-
-    document.getElementById(
-      "page-input"
-    )
-    .addEventListener(
-      "change",
-      async function() {
-
-        const p =
-          Number(
-            this.value
-          );
-
-
-        if (
-          !pdfDoc ||
-          !Number.isFinite(
-            p
-          ) ||
-          p < 1 ||
-          p >
-          pdfDoc.numPages
-        ) {
-
-          this.value =
-            pageNum;
-
-          return;
-
-        }
-
-
-        pageNum =
-          Math.floor(
-            p
-          );
-
-
-        await renderPage();
 
       }
-    );
 
-
-    window.thuLai =
-      async function() {
-
-        try {
-
-          if (loadingTask) {
-
-            await loadingTask.destroy();
-
-          }
-
-        } catch (_) {}
-
-
-        pdfDoc =
-          null;
-
-
-        loadingTask =
-          null;
-
-
-        renderTask =
-          null;
-
-
-        khoiDong();
-
-      };
-
-
-    window.dongViewer =
-      function() {
-
-        window.close();
-
-
-        setTimeout(
-          function() {
-
-            if (
-              history.length > 1
-            ) {
-
-              history.back();
-
-            }
-
-          },
-          80
-        );
-
-      };
-
-
-    window.addEventListener(
-      "resize",
-      function() {
-
-        if (!pdfDoc) {
-          return;
-        }
-
-
-        clearTimeout(
-          resizeTimer
-        );
-
-
-        resizeTimer =
-          setTimeout(
-            function() {
-
-              renderPage();
-
-            },
-            180
-          );
-
-      }
-    );
+    }
 
 
     khoiDong();
