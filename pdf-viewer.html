@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <title>Tài liệu tham khảo</title>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs"
+    type="module">
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #202124;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      padding-top: env(safe-area-inset-top);
+    }
+
+    .viewer-header {
+      position: fixed;
+      top: env(safe-area-inset-top);
+      left: 0;
+      right: 0;
+
+      height: 58px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 14px;
+
+      background: #174a82;
+      color: white;
+
+      z-index: 10;
+    }
+
+    .viewer-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .btn-close {
+      width: 44px;
+      height: 44px;
+
+      border: 0;
+      border-radius: 12px;
+
+      background: rgba(255,255,255,0.16);
+      color: white;
+
+      font-size: 30px;
+      line-height: 1;
+
+      cursor: pointer;
+    }
+
+    .toolbar {
+      position: fixed;
+      top: calc(58px + env(safe-area-inset-top));
+      left: 0;
+      right: 0;
+
+      height: 52px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+
+      background: #303134;
+
+      z-index: 9;
+    }
+
+    .toolbar button,
+    .toolbar input {
+      height: 36px;
+
+      border-radius: 8px;
+      border: 1px solid #666;
+
+      background: #3c4043;
+      color: white;
+
+      font-size: 14px;
+    }
+
+    .toolbar button {
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    .toolbar input {
+      width: 64px;
+      text-align: center;
+    }
+
+    .pdf-wrap {
+      padding:
+        calc(122px + env(safe-area-inset-top))
+        10px
+        30px;
+
+      text-align: center;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+
+      max-width: 100%;
+      height: auto;
+
+      background: white;
+
+      box-shadow:
+        0 6px 22px rgba(0,0,0,0.30);
+    }
+
+    .status {
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="viewer-header">
+
+    <div
+      class="viewer-title"
+      id="viewer-title">
+
+      Tài liệu tham khảo
+
+    </div>
+
+    <button
+      class="btn-close"
+      onclick="dongViewer()">
+
+      ×
+
+    </button>
+
+  </div>
+
+
+  <div class="toolbar">
+
+    <button onclick="trangTruoc()">
+      ‹
+    </button>
+
+    <input
+      id="page-input"
+      type="number"
+      min="1">
+
+    <span
+      id="page-total"
+      style="color:white;">
+    </span>
+
+    <button onclick="trangSau()">
+      ›
+    </button>
+
+    <button onclick="thuNho()">
+      −
+    </button>
+
+    <button onclick="phongTo()">
+      +
+    </button>
+
+  </div>
+
+
+  <div class="pdf-wrap">
+
+    <div
+      id="status"
+      class="status">
+
+      Đang tải tài liệu...
+
+    </div>
+
+    <canvas
+      id="pdf-canvas"
+      style="display:none;">
+    </canvas>
+
+  </div>
+
+
+  <script type="module">
+
+    import * as pdfjsLib
+      from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    const file =
+      params.get("file") || "";
+
+
+    let pageNum =
+      Number(
+        params.get("page")
+      ) || 1;
+
+
+    let scale =
+      window.innerWidth <= 700
+        ? 1.25
+        : 1.5;
+
+
+    let pdfDoc =
+      null;
+
+
+    const canvas =
+      document.getElementById(
+        "pdf-canvas"
+      );
+
+
+    const ctx =
+      canvas.getContext(
+        "2d"
+      );
+
+
+    async function khoiDong() {
+
+      if (!file) {
+
+        document.getElementById(
+          "status"
+        ).innerText =
+          "Không tìm thấy file PDF.";
+
+        return;
+
+      }
+
+
+      try {
+
+        pdfDoc =
+          await pdfjsLib
+            .getDocument(file)
+            .promise;
+
+
+        if (pageNum > pdfDoc.numPages) {
+          pageNum =
+            pdfDoc.numPages;
+        }
+
+
+        document.getElementById(
+          "page-total"
+        ).innerText =
+          "/ " +
+          pdfDoc.numPages;
+
+
+        document.getElementById(
+          "page-input"
+        ).value =
+          pageNum;
+
+
+        await renderPage();
+
+      } catch (err) {
+
+        console.error(err);
+
+        document.getElementById(
+          "status"
+        ).innerText =
+          "Không thể tải PDF.";
+
+      }
+
+    }
+
+
+    async function renderPage() {
+
+      if (!pdfDoc) {
+        return;
+      }
+
+
+      const page =
+        await pdfDoc.getPage(
+          pageNum
+        );
+
+
+      const viewport =
+        page.getViewport({
+          scale: scale
+        });
+
+
+      canvas.width =
+        viewport.width;
+
+
+      canvas.height =
+        viewport.height;
+
+
+      canvas.style.display =
+        "block";
+
+
+      document.getElementById(
+        "status"
+      ).style.display =
+        "none";
+
+
+      await page.render({
+        canvasContext: ctx,
+        viewport: viewport
+      }).promise;
+
+
+      document.getElementById(
+        "page-input"
+      ).value =
+        pageNum;
+
+
+      const url =
+        new URL(
+          window.location.href
+        );
+
+
+      url.searchParams.set(
+        "page",
+        pageNum
+      );
+
+
+      history.replaceState(
+        null,
+        "",
+        url
+      );
+
+    }
+
+
+    window.trangTruoc =
+      function() {
+
+        if (
+          !pdfDoc ||
+          pageNum <= 1
+        ) {
+
+          return;
+        }
+
+
+        pageNum--;
+
+        renderPage();
+
+      };
+
+
+    window.trangSau =
+      function() {
+
+        if (
+          !pdfDoc ||
+          pageNum >= pdfDoc.numPages
+        ) {
+
+          return;
+        }
+
+
+        pageNum++;
+
+        renderPage();
+
+      };
+
+
+    window.phongTo =
+      function() {
+
+        scale += 0.15;
+
+        renderPage();
+
+      };
+
+
+    window.thuNho =
+      function() {
+
+        scale =
+          Math.max(
+            0.5,
+            scale - 0.15
+          );
+
+        renderPage();
+
+      };
+
+
+    document
+      .getElementById(
+        "page-input"
+      )
+      .addEventListener(
+        "change",
+        function() {
+
+          const p =
+            Number(
+              this.value
+            );
+
+
+          if (
+            !pdfDoc ||
+            p < 1 ||
+            p > pdfDoc.numPages
+          ) {
+
+            this.value =
+              pageNum;
+
+            return;
+
+          }
+
+
+          pageNum =
+            p;
+
+
+          renderPage();
+
+        }
+      );
+
+
+    window.dongViewer =
+      function() {
+
+        window.close();
+
+      };
+
+
+    khoiDong();
+
+  </script>
+
+</body>
+</html>
