@@ -1,1 +1,871 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <title>Tài liệu tham khảo</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+
+      background: #EEF3F8;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Google Sans",
+        "Noto Sans",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+    }
+
+    body {
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .viewer {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+
+      padding: 16px;
+    }
+
+    .loading {
+      width:
+        min(
+          360px,
+          calc(100vw - 40px)
+        );
+
+      margin-top: 42px;
+
+      color: #163F73;
+
+      text-align: center;
+    }
+
+    .loading-title {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .loading-detail {
+      margin-top: 7px;
+
+      color: #67809A;
+
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+
+      margin-top: 14px;
+
+      overflow: hidden;
+
+      border-radius: 999px;
+
+      background: #D5E0EB;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+
+      border-radius: inherit;
+
+      background: #2D75C7;
+
+      transition: width .15s ease;
+    }
+
+    .error {
+      display: none;
+
+      width:
+        min(
+          440px,
+          calc(100vw - 40px)
+        );
+
+      margin-top: 42px;
+
+      padding: 16px;
+
+      border-radius: 16px;
+
+      background: #FFFFFF;
+
+      color: #8B1E1E;
+
+      box-shadow:
+        0 8px 26px rgba(16,55,92,0.10);
+
+      text-align: left;
+
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .pages-wrap {
+      display: none;
+
+      width: 100%;
+      max-width: 980px;
+
+      text-align: center;
+    }
+
+    .page-block {
+      width: 100%;
+
+      margin:
+        0
+        auto
+        22px;
+    }
+
+    .page-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      min-height: 28px;
+
+      margin-bottom: 8px;
+
+      padding:
+        5px
+        10px;
+
+      border-radius: 999px;
+
+      background: #DCE9F7;
+      color: #174A82;
+
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    canvas {
+      display: block;
+
+      max-width: 100%;
+      height: auto;
+
+      margin: 0 auto;
+
+      background: #FFFFFF;
+
+      border-radius: 8px;
+
+      box-shadow:
+        0 8px 26px rgba(16,55,92,0.16);
+    }
+
+    @media (max-width: 700px) {
+
+      .viewer {
+        padding: 10px;
+      }
+
+      .page-block {
+        margin-bottom: 16px;
+      }
+
+      canvas {
+        border-radius: 6px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="viewer">
+
+    <div
+      id="loading"
+      class="loading">
+
+      <div class="loading-title">
+        Đang mở tài liệu tham khảo...
+      </div>
+
+      <div
+        id="loading-detail"
+        class="loading-detail">
+
+        Đang đọc dữ liệu cần thiết.
+      </div>
+
+      <div class="progress-track">
+
+        <div
+          id="progress-bar"
+          class="progress-bar">
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="error"
+      class="error">
+    </div>
+
+
+    <div
+      id="pages-wrap"
+      class="pages-wrap">
+    </div>
+
+  </div>
+
+
+  <script type="module">
+
+    import * as pdfjsLib
+      from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    const file =
+      String(
+        params.get("file") ||
+        ""
+      ).trim();
+
+
+    const pagesRaw =
+      String(
+        params.get("pages") ||
+        params.get("page") ||
+        "1"
+      )
+      .trim();
+
+
+    function parseDanhSachTrang(
+      rawValue
+    ) {
+
+      const raw =
+        String(
+          rawValue ||
+          "1"
+        )
+        .trim()
+        .replace(
+          /[–—]/g,
+          "-"
+        )
+        .replace(
+          /\s+/g,
+          ""
+        );
+
+
+      const result =
+        [];
+
+
+      const daCo =
+        new Set();
+
+
+      function themTrang(
+        page
+      ) {
+
+        const p =
+          Number(
+            page
+          );
+
+
+        if (
+          !Number.isFinite(
+            p
+          ) ||
+          p < 1
+        ) {
+
+          return;
+
+        }
+
+
+        const pageInt =
+          Math.floor(
+            p
+          );
+
+
+        if (
+          daCo.has(
+            pageInt
+          )
+        ) {
+
+          return;
+
+        }
+
+
+        daCo.add(
+          pageInt
+        );
+
+
+        result.push(
+          pageInt
+        );
+
+      }
+
+
+      raw
+        .split(",")
+        .map(
+          function(part) {
+            return part.trim();
+          }
+        )
+        .filter(Boolean)
+        .forEach(
+          function(part) {
+
+            const single =
+              part.match(
+                /^(\d+)$/
+              );
+
+
+            if (single) {
+
+              themTrang(
+                single[1]
+              );
+
+              return;
+
+            }
+
+
+            const range =
+              part.match(
+                /^(\d+)-(\d+)$/
+              );
+
+
+            if (!range) {
+              return;
+            }
+
+
+            const start =
+              Number(
+                range[1]
+              );
+
+
+            const end =
+              Number(
+                range[2]
+              );
+
+
+            if (
+              !Number.isFinite(
+                start
+              ) ||
+              !Number.isFinite(
+                end
+              ) ||
+              start < 1 ||
+              end < 1
+            ) {
+
+              return;
+
+            }
+
+
+            const step =
+              start <= end
+                ? 1
+                : -1;
+
+
+            for (
+              let p = start;
+
+              step > 0
+                ? p <= end
+                : p >= end;
+
+              p += step
+            ) {
+
+              themTrang(
+                p
+              );
+
+            }
+
+          }
+        );
+
+
+      return (
+        result.length > 0
+          ? result
+          : [1]
+      );
+
+    }
+
+
+    function hienLoi(
+      message
+    ) {
+
+      document.getElementById(
+        "loading"
+      ).style.display =
+        "none";
+
+
+      document.getElementById(
+        "pages-wrap"
+      ).style.display =
+        "none";
+
+
+      const error =
+        document.getElementById(
+          "error"
+        );
+
+
+      error.style.display =
+        "block";
+
+
+      error.innerText =
+        message;
+
+    }
+
+
+    async function renderMotTrang(
+      pdfDoc,
+      pageNum,
+      index,
+      total
+    ) {
+
+      document.getElementById(
+        "loading-detail"
+      ).innerText =
+        "Đang mở trang " +
+        pageNum +
+        " • " +
+        (index + 1) +
+        "/" +
+        total;
+
+
+      const page =
+        await pdfDoc.getPage(
+          pageNum
+        );
+
+
+      const baseViewport =
+        page.getViewport({
+          scale: 1
+        });
+
+
+      const availableWidth =
+        Math.max(
+          260,
+          window.innerWidth -
+          (
+            window.innerWidth <= 700
+              ? 20
+              : 36
+          )
+        );
+
+
+      const fitScale =
+        availableWidth /
+        baseViewport.width;
+
+
+      const viewport =
+        page.getViewport({
+          scale:
+            fitScale
+        });
+
+
+      const outputScale =
+        Math.min(
+          window.devicePixelRatio || 1,
+          2
+        );
+
+
+      const pageBlock =
+        document.createElement(
+          "div"
+        );
+
+
+      pageBlock.className =
+        "page-block";
+
+
+      const label =
+        document.createElement(
+          "div"
+        );
+
+
+      label.className =
+        "page-label";
+
+
+      label.textContent =
+        "Trang " +
+        pageNum;
+
+
+      const canvas =
+        document.createElement(
+          "canvas"
+        );
+
+
+      const ctx =
+        canvas.getContext(
+          "2d",
+          {
+            alpha: false
+          }
+        );
+
+
+      canvas.width =
+        Math.floor(
+          viewport.width *
+          outputScale
+        );
+
+
+      canvas.height =
+        Math.floor(
+          viewport.height *
+          outputScale
+        );
+
+
+      canvas.style.width =
+        Math.floor(
+          viewport.width
+        ) + "px";
+
+
+      canvas.style.height =
+        Math.floor(
+          viewport.height
+        ) + "px";
+
+
+      const transform =
+        outputScale !== 1
+
+          ? [
+              outputScale,
+              0,
+              0,
+              outputScale,
+              0,
+              0
+            ]
+
+          : null;
+
+
+      pageBlock.appendChild(
+        label
+      );
+
+
+      pageBlock.appendChild(
+        canvas
+      );
+
+
+      document.getElementById(
+        "pages-wrap"
+      ).appendChild(
+        pageBlock
+      );
+
+
+      await page.render({
+
+        canvasContext:
+          ctx,
+
+        viewport:
+          viewport,
+
+        transform:
+          transform,
+
+        intent:
+          "display"
+
+      }).promise;
+
+    }
+
+
+    async function khoiDong() {
+
+      if (!file) {
+
+        hienLoi(
+          "Không tìm thấy đường dẫn PDF."
+        );
+
+        return;
+
+      }
+
+
+      try {
+
+        /*
+         * Chỉ render các trang được yêu cầu.
+         * PDF.js vẫn có thể cần đọc thêm một số vùng cấu trúc
+         * của PDF như xref/object liên quan.
+         */
+        const loadingTask =
+          pdfjsLib.getDocument({
+
+            url:
+              file,
+
+            rangeChunkSize:
+              64 * 1024,
+
+            disableRange:
+              false,
+
+            disableStream:
+              true,
+
+            disableAutoFetch:
+              true
+
+          });
+
+
+        loadingTask.onProgress =
+          function(progressData) {
+
+            const loaded =
+              Number(
+                progressData &&
+                progressData.loaded
+              ) || 0;
+
+
+            const total =
+              Number(
+                progressData &&
+                progressData.total
+              ) || 0;
+
+
+            if (
+              total > 0
+            ) {
+
+              const percent =
+                Math.max(
+                  0,
+                  Math.min(
+                    100,
+                    Math.round(
+                      loaded /
+                      total *
+                      100
+                    )
+                  )
+                );
+
+
+              document.getElementById(
+                "progress-bar"
+              ).style.width =
+                percent + "%";
+
+            }
+
+          };
+
+
+        const pdfDoc =
+          await loadingTask.promise;
+
+
+        const danhSachTrangGoc =
+          parseDanhSachTrang(
+            pagesRaw
+          );
+
+
+        const danhSachTrang =
+          danhSachTrangGoc.filter(
+            function(pageNum) {
+
+              return (
+                pageNum >= 1 &&
+                pageNum <=
+                pdfDoc.numPages
+              );
+
+            }
+          );
+
+
+        if (
+          danhSachTrang.length === 0
+        ) {
+
+          hienLoi(
+            "Các trang tham khảo không tồn tại trong tài liệu PDF."
+          );
+
+          return;
+
+        }
+
+
+        document.getElementById(
+          "pages-wrap"
+        ).innerHTML =
+          "";
+
+
+        for (
+          let i = 0;
+
+          i <
+          danhSachTrang.length;
+
+          i++
+        ) {
+
+          await renderMotTrang(
+            pdfDoc,
+            danhSachTrang[i],
+            i,
+            danhSachTrang.length
+          );
+
+        }
+
+
+        document.getElementById(
+          "progress-bar"
+        ).style.width =
+          "100%";
+
+
+        document.getElementById(
+          "loading"
+        ).style.display =
+          "none";
+
+
+        document.getElementById(
+          "error"
+        ).style.display =
+          "none";
+
+
+        document.getElementById(
+          "pages-wrap"
+        ).style.display =
+          "block";
+
+
+      } catch (err) {
+
+        console.error(
+          err
+        );
+
+
+        hienLoi(
+          err &&
+          err.message
+
+            ? "Không thể mở tài liệu: " +
+              err.message
+
+            : "Không thể mở tài liệu."
+        );
+
+      }
+
+    }
+
+
+    khoiDong();
+
+  </script>
+
+</body>
+</html>
